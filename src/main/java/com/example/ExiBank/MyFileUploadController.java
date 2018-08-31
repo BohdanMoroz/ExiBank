@@ -101,6 +101,13 @@ public class MyFileUploadController {
                     failedFiles.add(name);
                 }
 
+                //
+                //
+                // ---------------------------------------------------------------
+                //  Читання і запис файлів*
+                //
+                //
+
                 FileTypeTest fileTypeTest = new FileTypeTest();
                 fileTypeTest.setFileType(serverFile.toString());
                 ExcelFile excelFile = fileTypeTest.factory();
@@ -110,6 +117,13 @@ public class MyFileUploadController {
                     IBank2Writer iBank2Writer = new IBank2Writer(excelReader.getList());
                     iBank2Writer.saveDoc();
                 } catch (IOException e) {}
+
+                //
+                //
+                // ---------------------------------------------------------------
+                //
+                //
+                //
 
 
             }
