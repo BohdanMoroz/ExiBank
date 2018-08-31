@@ -25,7 +25,7 @@ public class IBank2Writer {
     }
 
     // Write and save an information into file
-    // FIXME:   make this mathod smaller
+    // FIXME:   make this method smaller
     public void saveDoc() {
 
         writer.println("DATE_DOC=");
@@ -35,12 +35,12 @@ public class IBank2Writer {
         writer.println("PAYER_BANK_NAME=");
 
         //Think about using forEach
-        for (int i = 0; i < 2; i++) {
+        for (int cardHolderIndex = 0; cardHolderIndex < list.size(); cardHolderIndex++) {
             writer.println();
-            writer.println("CARD_HOLDERS." + i + ".CARD_NUM=" + list.get(i).getSKR());
-            writer.println("CARD_HOLDERS." + i + ".CARD_HOLDER=" + list.get(i).getName());
-            writer.println("CARD_HOLDERS." + i + ".CARD_HOLDER_INN=" + list.get(i).getDRFO());
-            writer.println("CARD_HOLDERS." + i + ".SKS_NUMBER=" + list.get(i).getSKR());
+            writer.println("CARD_HOLDERS." + cardHolderIndex + ".CARD_NUM=" + list.get(cardHolderIndex).getSKR());
+            writer.println("CARD_HOLDERS." + cardHolderIndex + ".CARD_HOLDER=" + list.get(cardHolderIndex).getName());
+            writer.println("CARD_HOLDERS." + cardHolderIndex + ".CARD_HOLDER_INN=" + list.get(cardHolderIndex).getDRFO());
+            writer.println("CARD_HOLDERS." + cardHolderIndex + ".SKS_NUMBER=" + list.get(cardHolderIndex).getSKR());
         }
 
         writer.close();

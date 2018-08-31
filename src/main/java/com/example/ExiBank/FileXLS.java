@@ -19,11 +19,15 @@ public class FileXLS implements ExcelFile{
     private HSSFSheet currentSheet;
     private HSSFRow currentRow;
 
-    public FileXLS(String filePath) throws IOException {
+    public FileXLS(String filePath) {
         this.filePath = filePath;
-        initWorkbook();
-        initSheet();
-        initRow();
+        try {
+            initWorkbook();
+            initSheet();
+            initRow();
+        } catch (IOException e) {
+
+        }
     }
 
     // Initialize the xls file via filePath

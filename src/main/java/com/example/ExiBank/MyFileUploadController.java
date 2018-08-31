@@ -2,6 +2,7 @@ package com.example.ExiBank;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,11 +41,11 @@ public class MyFileUploadController {
     private String doUpload(HttpServletRequest request, Model model, //
                             MyUploadForm myUploadForm) {
 
-//        String description = myUploadForm.getDescription();
-//        System.out.println("Description: " + description);
-
-        String description = myUploadForm.getDocDate();
+        String description = myUploadForm.getDescription();
         System.out.println("Description: " + description);
+
+//        String description = myUploadForm.getDocDate();
+//        System.out.println("Description: " + description);
 
         // Root Directory.
 //        String uploadRootPath = request.getServletContext().getRealPath("upload");
@@ -69,9 +70,10 @@ public class MyFileUploadController {
             System.out.println("Client File Name = " + name);
 
             if (name != null && name.length() > 0) {
+                File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
                 try {
                     // Create the file at server
-                    File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
+//                    File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
 
                     BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
                     stream.write(fileData.getBytes());
@@ -86,17 +88,33 @@ public class MyFileUploadController {
 //                    IBank2Writer iBank2Writer = new IBank2Writer(excelReader.getList());
 //                    iBank2Writer.saveDoc();
 
-                    FileTypeTest fileTypeTest = new FileTypeTest();
-                    fileTypeTest.setFileType(serverFile.toString());
-                    fileTypeTest.VerifyFileType();
+//                    FileTypeTest fileTypeTest = new FileTypeTest();
+//                    fileTypeTest.setFileType(serverFile.toString());
+//                    ExcelFile excelFile = fileTypeTest.factory();
+//                    ExcelReader excelReader = new ExcelReader(excelFile);
+//                    excelReader.readDoc();
+//                    IBank2Writer iBank2Writer = new IBank2Writer(excelReader.getList());
+//                    iBank2Writer.saveDoc();
 
                 } catch (Exception e) {
                     System.out.println("Error Write file: " + name);
                     failedFiles.add(name);
                 }
+
+                FileTypeTest fileTypeTest = new FileTypeTest();
+                fileTypeTest.setFileType(serverFile.toString());
+                ExcelFile excelFile = fileTypeTest.factory();
+                try {
+                    ExcelReader excelReader = new ExcelReader(excelFile);
+                    excelReader.readDoc();
+                    IBank2Writer iBank2Writer = new IBank2Writer(excelReader.getList());
+                    iBank2Writer.saveDoc();
+                } catch (IOException e) {}
+
+
             }
 //        }
-//        model.addAttribute("description", description);
+        model.addAttribute("description", description);
         model.addAttribute("uploadedFiles", uploadedFiles);
         model.addAttribute("failedFiles", failedFiles);
         return "uploadResult";
