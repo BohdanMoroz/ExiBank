@@ -38,10 +38,12 @@ public class MyFileUploadController {
 
     }
 
+    // TODO: Method is too long
     private String doUpload(HttpServletRequest request, Model model, //
                             MyUploadForm myUploadForm) {
 
         String description = myUploadForm.getDescription();
+        // TODO: Logging should be used instead system.out
         System.out.println("Description: " + description);
 
 //        String description = myUploadForm.getDocDate();
@@ -49,6 +51,7 @@ public class MyFileUploadController {
 
         // Root Directory.
 //        String uploadRootPath = request.getServletContext().getRealPath("upload");
+        // TODO: Will not work if there is no drive "D:" or no access. 
         String uploadRootPath = "D:/";
         System.out.println("uploadRootPath=" + uploadRootPath);
 
