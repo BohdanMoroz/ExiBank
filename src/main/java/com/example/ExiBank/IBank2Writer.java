@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Make as a spring component. Remove fields (class should be stateless)
 public class IBank2Writer {
     private List<CardHolder> list;
     private PrintWriter writer;
