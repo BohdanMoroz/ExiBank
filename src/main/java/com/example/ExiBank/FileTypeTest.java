@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.spi.FileTypeDetector;
 
+// Tests should be in directory for tests. Also they should include assertions but no system.out
 public class FileTypeTest {
 
     private String fileName;
