@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Make as Spring component
 public class ExcelReader {
 
+    // Since class name is "reader" it should only read. It should be stateless. In your case this class also includes interim data like book, row, list, etc.
+    // TODO: Remove all fields
     private Workbook currentWorkbook;
     private Sheet currentSheet;
     private Row currentRow;
@@ -44,6 +47,7 @@ public class ExcelReader {
 
     // Fetch all information from every cell of Excel file, and put it into CardHolder
     // FIXME:   make this method smaller
+    // TODO: Input parameter should be ExcelFile file, ouput one should be List<CardHolder>
     public void readDoc() throws IOException {
         for (int i = firstRowNumber; i <= lastRowNumber; i++) {
             currentRow = currentSheet.getRow(i);
@@ -58,7 +62,7 @@ public class ExcelReader {
         }
         currentWorkbook.close();
     }
-
+    
     public List<CardHolder> getList() {
         return list;
     }
