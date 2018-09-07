@@ -1,9 +1,4 @@
-package com.example.ExiBank;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.spi.FileTypeDetector;
+package com.example.exibank;
 
 public class FileTypeTest {
 

@@ -1,7 +1,7 @@
 // This class receive information about every card holder from list of POJO classes as parameter in constructor.
 // It tries to write this information into new file, and save it like iBank2.
 
-package com.example.ExiBank;
+package com.example.exibank;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,7 +14,7 @@ public class IBank2Writer {
 
     // THINK:   try to separate file name and file path
     // FIXME:   change file type from .txt to .iBank2
-    private String fileName = "D:/test.txt";
+    private String fileName = "D:/test2.txt";
 
     // THINK:   is it right encoding for iBank2 ?
     private String encoding = "UTF-8";
@@ -44,5 +44,9 @@ public class IBank2Writer {
         }
 
         writer.close();
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 }

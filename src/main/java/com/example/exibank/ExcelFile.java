@@ -1,6 +1,6 @@
 // Every class working with excel directly, must implement this interface for proper work of program.
 
-package com.example.ExiBank;
+package com.example.exibank;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;

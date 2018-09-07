@@ -1,4 +1,4 @@
-package com.example.ExiBank;
+package com.example.exibank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

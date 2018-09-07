@@ -1,6 +1,6 @@
 // This class receive file path as constructor parameter and initialize Excel file with XLS format.
 
-package com.example.ExiBank;
+package com.example.exibank;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;

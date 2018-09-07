@@ -1,4 +1,4 @@
-package com.example.ExiBank;
+package com.example.exibank;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

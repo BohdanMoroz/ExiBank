@@ -6,20 +6,26 @@
 </head>
 
 <body>
-<!--<th:block th:include="/_menu"></th:block>-->
+    <!--<th:block th:include="/_menu"></th:block>-->
 
-Description: <span th:utext="${description}"></span>
-<br/>
-<h3>Uploaded Files:</h3>
+    docDate: <span th:utext="${docDate}"></span>
+    <br>
+    docNumber: <span th:utext="${docNumber}"></span>
+    <br>
+    clientName: <span th:utext="${clientName}"></span>
+    <br>
+    bankNumber: <span th:utext="${bankNumber}"></span>
+    <br>
+    bankName: <span th:utext="${bankName}"></span>
+    <br/>
+    <h3>Uploaded File:</h3>
 
-<ul th:each="file : ${uploadedFiles}">
-    <li th:utext="${file}"></li>
-</ul>
+    <span th:utext="${uploadedFile}"></span>
 
-<h3>Failed:</h3>
-<ul th:each="file : ${failedFiles}">
-    <li style="color:red;" th:utext="${file}"></li>
-</ul>
+    <!--<script>-->
+        <!--alert("Yes!");-->
+        <!--location="http://localhost:8080/download3";-->
+    <!--</script>-->
 
 </body>
 

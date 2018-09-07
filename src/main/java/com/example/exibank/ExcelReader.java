@@ -1,6 +1,6 @@
 // This class receive Excel file, and tries to fetch data form every row into separate POJO class called CardHolder.
 
-package com.example.ExiBank;
+package com.example.exibank;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,7 +19,7 @@ public class ExcelReader {
     private int firstRowNumber;
     private int lastRowNumber;
 
-    private CardHolder cardHolder;
+//    private CardHolder cardHolder;
 
     private List<CardHolder> list = new ArrayList<CardHolder>();
 
@@ -48,7 +48,7 @@ public class ExcelReader {
         for (int i = firstRowNumber; i <= lastRowNumber; i++) {
             currentRow = currentSheet.getRow(i);
 
-            cardHolder = new CardHolder();
+            CardHolder cardHolder = new CardHolder();
 
             cardHolder.setSKR( (int) currentRow.getCell(0).getNumericCellValue() );
             cardHolder.setName( currentRow.getCell(1).getStringCellValue() );
