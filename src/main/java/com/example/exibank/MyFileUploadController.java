@@ -82,11 +82,11 @@ public class MyFileUploadController {
     private String doUpload(HttpServletRequest request, Model model, //
                             MyUploadForm myUploadForm) {
 
-        String docDate = myUploadForm.getDocDate();
-        String docNumber = myUploadForm.getDocNumber();
-        String clientName = myUploadForm.getClientName();
-        String bankNumber = myUploadForm.getBankNumber();
-        String bankName = myUploadForm.getBankName();
+//        String docDate = myUploadForm.getDocDate();
+//        String docNumber = myUploadForm.getDocNumber();
+//        String clientName = myUploadForm.getClientName();
+//        String bankNumber = myUploadForm.getBankNumber();
+//        String bankName = myUploadForm.getBankName();
 
         // Root Directory.
         String uploadRootPath = "./";
@@ -125,25 +125,32 @@ public class MyFileUploadController {
             }
 
 
-            FileTypeTest fileTypeTest = new FileTypeTest();
-            fileTypeTest.setFileType(serverFile.toString());
-            ExcelFile excelFile = fileTypeTest.factory();
-            try {
-                ExcelReader excelReader = new ExcelReader(excelFile);
-                excelReader.readDoc();
-                IBank2Writer iBank2Writer = new IBank2Writer(excelReader.getList());
-                iBank2Writer.saveDoc();
-                downloadFile = new File(iBank2Writer.getFileName());
-            } catch (IOException e) {}
+
         }
 
-        model.addAttribute("docDate", docDate);
-        model.addAttribute("docNumber", docNumber);
-        model.addAttribute("clientName", clientName);
-        model.addAttribute("bankNumber", bankNumber);
-        model.addAttribute("bankName", bankName);
-        model.addAttribute("uploadedFile", serverFile);
+//        model.addAttribute("docDate", docDate);
+//        model.addAttribute("docNumber", docNumber);
+//        model.addAttribute("clientName", clientName);
+//        model.addAttribute("bankNumber", bankNumber);
+//        model.addAttribute("bankName", bankName);
+//        model.addAttribute("uploadedFile", serverFile);
+
+        doSmth(myUploadForm);
+
         return "uploadResult";
+    }
+
+    public void doSmth(MyUploadForm myUploadForm) {
+        FileTypeTest fileTypeTest = new FileTypeTest();
+        fileTypeTest.setFileType(serverFile.toString());
+        ExcelFile excelFile = fileTypeTest.factory();
+        try {
+            ExcelReader excelReader = new ExcelReader(excelFile);
+            excelReader.readDoc();
+            IBank2Writer iBank2Writer = new IBank2Writer(myUploadForm, excelReader.getList());
+            iBank2Writer.saveDoc();
+            downloadFile = new File(iBank2Writer.getFileName());
+        } catch (IOException e) {}
     }
 
 }
