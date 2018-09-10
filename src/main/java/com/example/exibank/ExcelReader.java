@@ -23,7 +23,7 @@ public class ExcelReader {
 
     private List<CardHolder> list = new ArrayList<CardHolder>();
 
-    public ExcelReader(ExcelFile file) throws IOException {
+    public ExcelReader(ExcelFile file) {
         currentWorkbook = file.getCurrentWorkbook();
         currentSheet = file.getCurrentSheet();
         currentRow = file.getCurrentRow();
@@ -43,7 +43,6 @@ public class ExcelReader {
     }
 
     // Fetch all information from every cell of Excel file, and put it into CardHolder
-    // FIXME:   make this method smaller
     public void readDoc() throws IOException {
         for (int i = firstRowNumber; i <= lastRowNumber; i++) {
             currentRow = currentSheet.getRow(i);

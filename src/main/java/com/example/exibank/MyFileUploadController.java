@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class MyFileUploadController {
 
-    private static final String DIRECTORY = "D:/";
     private static final String DEFAULT_FILE_NAME = "test.txt";
 
     private File serverFile;
@@ -26,8 +25,8 @@ public class MyFileUploadController {
     @Autowired
     private ServletContext servletContext;
 
-    @GetMapping("/download3")
-    public void downloadFile3(HttpServletResponse resonse,
+    @GetMapping("/download")
+    public void downloadFile(HttpServletResponse response,
                               @RequestParam(defaultValue = DEFAULT_FILE_NAME) String fileName) throws IOException {
 
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
@@ -37,20 +36,16 @@ public class MyFileUploadController {
 //        File file = new File(DIRECTORY + "/" + fileName);
 
         // Content-Type
-        // application/pdf
-        resonse.setContentType(mediaType.getType());
+        response.setContentType(mediaType.getType());
 
         // Content-Disposition
-//        resonse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName());
-        resonse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFile.getName());
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFile.getName());
 
         // Content-Length
-//        resonse.setContentLength((int) file.length());
-        resonse.setContentLength((int) downloadFile.length());
+        response.setContentLength((int) downloadFile.length());
 
-//        BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
         BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(downloadFile));
-        BufferedOutputStream outStream = new BufferedOutputStream(resonse.getOutputStream());
+        BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
 
         byte[] buffer = new byte[1024];
         int bytesRead = 0;
@@ -82,21 +77,11 @@ public class MyFileUploadController {
     private String doUpload(HttpServletRequest request, Model model, //
                             MyUploadForm myUploadForm) {
 
-//        String docDate = myUploadForm.getDocDate();
-//        String docNumber = myUploadForm.getDocNumber();
-//        String clientName = myUploadForm.getClientName();
-//        String bankNumber = myUploadForm.getBankNumber();
-//        String bankName = myUploadForm.getBankName();
-
         // Root Directory.
         String uploadRootPath = "./";
-        System.out.println("uploadRootPath=" + uploadRootPath);
 
         File uploadRootDir = new File(uploadRootPath);
-        // Create directory if it not exists.
-        if (!uploadRootDir.exists()) {
-            uploadRootDir.mkdirs();
-        }
+
         MultipartFile fileData = myUploadForm.getFileData();
 
         // Client File Name
@@ -115,11 +100,7 @@ public class MyFileUploadController {
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
                 stream.write(fileData.getBytes());
                 stream.close();
-                //
-//              uploadedFiles.add(serverFile);
-                System.out.println("000 000 000 Write file: " + serverFile);
-                System.out.println("000 000 000 Write file: " + uploadRootDir);
-                System.out.println("000 000 000 Write file: " + uploadRootDir.getAbsolutePath());
+
             } catch (Exception e) {
                 System.out.println("Error Write file: " + name);
             }
@@ -127,13 +108,6 @@ public class MyFileUploadController {
 
 
         }
-
-//        model.addAttribute("docDate", docDate);
-//        model.addAttribute("docNumber", docNumber);
-//        model.addAttribute("clientName", clientName);
-//        model.addAttribute("bankNumber", bankNumber);
-//        model.addAttribute("bankName", bankName);
-//        model.addAttribute("uploadedFile", serverFile);
 
         doSmth(myUploadForm);
 
