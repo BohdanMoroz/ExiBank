@@ -3,7 +3,6 @@ package com.example.exibank;
 import java.io.*;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,32 +18,22 @@ public class MyFileUploadController {
 
     private static final String DEFAULT_FILE_NAME = "test.txt";
 
-    private File serverFile;
-    private File downloadFile;
+    private File resultFile;
 
     @Autowired
     private ServletContext servletContext;
 
     @GetMapping("/download")
-    public void downloadFile(HttpServletResponse response,
+    public void resultFile(HttpServletResponse response,
                               @RequestParam(defaultValue = DEFAULT_FILE_NAME) String fileName) throws IOException {
 
         MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
-        System.out.println("fileName: " + fileName);
-        System.out.println("mediaType: " + mediaType);
 
-//        File file = new File(DIRECTORY + "/" + fileName);
-
-        // Content-Type
         response.setContentType(mediaType.getType());
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + resultFile.getName());
+        response.setContentLength((int) resultFile.length());
 
-        // Content-Disposition
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + downloadFile.getName());
-
-        // Content-Length
-        response.setContentLength((int) downloadFile.length());
-
-        BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(downloadFile));
+        BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(resultFile));
         BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
 
         byte[] buffer = new byte[1024];
@@ -59,72 +48,66 @@ public class MyFileUploadController {
     @RequestMapping(value = "/")
     public String homePage(Model model) {
 
-        MyUploadForm myUploadForm = new MyUploadForm();
-        model.addAttribute("myUploadForm", myUploadForm);
+        UploadFormData uploadFormData = new UploadFormData();
+        model.addAttribute("uploadFormData", uploadFormData);
 
         return "index";
     }
 
-    // POST: Do Upload
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String uploadOneFileHandlerPOST(HttpServletRequest request, //
-                                           Model model, //
-                                           @ModelAttribute("myUploadForm") MyUploadForm myUploadForm) {
+    public String uploadOneFileHandlerPOST(@ModelAttribute("uploadFormData") UploadFormData uploadFormData) {
 
-        return this.doUpload(request, model, myUploadForm);
+        return this.doUpload(uploadFormData);
     }
 
-    private String doUpload(HttpServletRequest request, Model model, //
-                            MyUploadForm myUploadForm) {
+    private String doUpload(UploadFormData uploadFormData) {
 
-        // Root Directory.
-        String uploadRootPath = "./";
+        String uploadRootPath = "./bin/upload";
 
         File uploadRootDir = new File(uploadRootPath);
 
-        MultipartFile fileData = myUploadForm.getFileData();
+        if (!uploadRootDir.exists()) {
+            uploadRootDir.mkdirs();
+        }
 
-        // Client File Name
-        String name = fileData.getOriginalFilename();
-//      String name = "UploadedFile";
-        System.out.println("Client File Name = " + name);
+        MultipartFile uploadFileData = uploadFormData.getFileData();
 
-        if (name != null && name.length() > 0) {
-//          File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
-            serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
+        String uploadFileName = uploadFileData.getOriginalFilename();
+
+        String serverFilePath = uploadRootDir.getAbsolutePath() + File.separator + uploadFileName;
+
+        if (uploadFileName != null && uploadFileName.length() > 0) {
 
             try {
                 // Create the file at server
-//          File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
+                File serverFile = new File(serverFilePath);
 
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-                stream.write(fileData.getBytes());
+                stream.write(uploadFileData.getBytes());
                 stream.close();
 
-            } catch (Exception e) {
-                System.out.println("Error Write file: " + name);
+            } catch (IOException e) {
+                return "error_result";
             }
-
-
-
         }
 
-        doSmth(myUploadForm);
-
-        return "uploadResult";
+        return this.doSmth(uploadFormData, serverFilePath);
     }
 
-    public void doSmth(MyUploadForm myUploadForm) {
-        FileTypeTest fileTypeTest = new FileTypeTest();
-        fileTypeTest.setFileType(serverFile.toString());
-        ExcelFile excelFile = fileTypeTest.factory();
+    public String doSmth(UploadFormData uploadFormData, String serverFilePath) {
+        FileFactory fileFactory = new FileFactory();
+        ExcelFile excelFile = fileFactory.getExcelFile(serverFilePath);
         try {
             ExcelReader excelReader = new ExcelReader(excelFile);
             excelReader.readDoc();
-            IBank2Writer iBank2Writer = new IBank2Writer(myUploadForm, excelReader.getList());
+            IBank2Writer iBank2Writer = new IBank2Writer(uploadFormData, excelReader.getList());
             iBank2Writer.saveDoc();
-            downloadFile = new File(iBank2Writer.getFileName());
-        } catch (IOException e) {}
+            resultFile = new File(iBank2Writer.getFileName());
+        } catch (IOException e) {
+            return "error_result";
+        }
+
+        return "success_result";
     }
 
 }
