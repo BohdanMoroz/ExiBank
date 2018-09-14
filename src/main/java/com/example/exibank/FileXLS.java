@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class FileXLS implements ExcelFile{
 
-    private final int FIRST_POSITION = 0;
+    private static final int FIRST_POSITION = 0;
 
     private String filePath;
 
@@ -21,19 +21,17 @@ public class FileXLS implements ExcelFile{
 
     public FileXLS(String filePath) {
         this.filePath = filePath;
+        initWorkbook();
+        initSheet();
+        initRow();
+    }
+
+    public void initWorkbook() {
         try {
-            initWorkbook();
-            initSheet();
-            initRow();
+            currentWorkbook = new HSSFWorkbook(new FileInputStream(filePath));
         } catch (IOException e) {
 
         }
-    }
-
-    // Initialize the xls file via filePath
-    // FIXME:   try to hold exception here!
-    public void initWorkbook() throws IOException {
-        currentWorkbook = new HSSFWorkbook(new FileInputStream(filePath));
     }
 
     // Initialize first sheet in the xls file

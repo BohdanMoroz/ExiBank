@@ -2,12 +2,17 @@ package com.example.exibank;
 
 public class FileFactory {
 
-    public ExcelFile getExcelFile(String serverFilePath) {
-        String fileType = "";
+    private String getFileType(String serverFilePath) {
         int i = serverFilePath.lastIndexOf('.');
         if (i > 0) {
-            fileType = serverFilePath.substring(i+1);
+            return serverFilePath.substring(i+1);
+        } else {
+            return null;
         }
+    }
+
+    public ExcelFile getExcelFile(String serverFilePath) {
+        String fileType = getFileType(serverFilePath);
 
         if (fileType.equals("xls")) {
             return new FileXLS(serverFilePath);

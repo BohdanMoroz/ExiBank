@@ -2,7 +2,6 @@ package com.example.exibank;
 
 import java.io.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,33 +15,33 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class MyFileUploadController {
 
-    private static final String DEFAULT_FILE_NAME = "test.txt";
-
     private File resultFile;
 
-    @Autowired
-    private ServletContext servletContext;
-
-    @GetMapping("/download")
-    public void resultFile(HttpServletResponse response,
-                              @RequestParam(defaultValue = DEFAULT_FILE_NAME) String fileName) throws IOException {
-
-        MediaType mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, fileName);
-
-        response.setContentType(mediaType.getType());
+    private void setContentSettings(HttpServletResponse response) {
+        response.setContentType(String.valueOf(MediaType.APPLICATION_OCTET_STREAM));
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + resultFile.getName());
         response.setContentLength((int) resultFile.length());
+    }
 
-        BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(resultFile));
-        BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+    @GetMapping("/download")
+    public void resultFile(HttpServletResponse response) {
 
-        byte[] buffer = new byte[1024];
-        int bytesRead = 0;
-        while ((bytesRead = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, bytesRead);
+        setContentSettings(response);
+
+        try {
+            BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(resultFile));
+            BufferedOutputStream outStream = new BufferedOutputStream(response.getOutputStream());
+
+            byte[] buffer = new byte[1024];
+            int bytesRead = 0;
+            while ((bytesRead = inStream.read(buffer)) != -1) {
+                outStream.write(buffer, 0, bytesRead);
+            }
+            outStream.flush();
+            inStream.close();
+        } catch (IOException e) {
+
         }
-        outStream.flush();
-        inStream.close();
     }
 
     @RequestMapping(value = "/")
@@ -54,7 +53,7 @@ public class MyFileUploadController {
         return "index";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @PostMapping(value = "/")
     public String uploadOneFileHandlerPOST(@ModelAttribute("uploadFormData") UploadFormData uploadFormData) {
 
         return this.doUpload(uploadFormData);
@@ -76,19 +75,16 @@ public class MyFileUploadController {
 
         String serverFilePath = uploadRootDir.getAbsolutePath() + File.separator + uploadFileName;
 
-        if (uploadFileName != null && uploadFileName.length() > 0) {
+        try {
+            // Create the file at server
+            File serverFile = new File(serverFilePath);
 
-            try {
-                // Create the file at server
-                File serverFile = new File(serverFilePath);
+            BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+            stream.write(uploadFileData.getBytes());
+            stream.close();
 
-                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-                stream.write(uploadFileData.getBytes());
-                stream.close();
-
-            } catch (IOException e) {
-                return "error_result";
-            }
+        } catch (IOException e) {
+            return "error_result";
         }
 
         return this.doSmth(uploadFormData, serverFilePath);
@@ -104,8 +100,6 @@ public class MyFileUploadController {
         FileFactory fileFactory = new FileFactory();
         ExcelFile excelFile = fileFactory.getExcelFile(serverFilePath);
         try {
-//            ExcelReader excelReader = new ExcelReader();
-//            IBank2Writer iBank2Writer = new IBank2Writer();
             String path = iBank2Writer.write(uploadFormData, excelReader.readDoc(excelFile));
             resultFile = new File(path);
         } catch (IOException e) {

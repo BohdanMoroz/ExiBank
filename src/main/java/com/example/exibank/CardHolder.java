@@ -3,7 +3,8 @@
 package com.example.exibank;
 
 public class CardHolder {
-    // FIXME:   rename this fields!
+
+    // I will change this names
     private int SKR;
     private String name;
     private int DRFO;

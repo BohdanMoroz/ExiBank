@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class FileXLSX implements ExcelFile{
 
-    private final int FIRST_POSITION = 0;
+    private static final int FIRST_POSITION = 0;
 
     private String filePath;
 
@@ -21,19 +21,18 @@ public class FileXLSX implements ExcelFile{
 
     public FileXLSX(String filePath) {
         this.filePath = filePath;
+        initWorkbook();
+        initSheet();
+        initRow();
+    }
+
+    public void initWorkbook() {
         try {
-            initWorkbook();
-            initSheet();
-            initRow();
+            currentWorkbook = new XSSFWorkbook(new FileInputStream(filePath));
         } catch (IOException e) {
 
         }
-    }
 
-    // Initialize the xlsx file via filePath
-    // FIXME:   try to hold exception here!
-    public void initWorkbook() throws IOException {
-        currentWorkbook = new XSSFWorkbook(new FileInputStream(filePath));
     }
 
     // Initialize first sheet in the xlsx file

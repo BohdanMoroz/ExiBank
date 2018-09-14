@@ -8,49 +8,56 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class IBank2Writer {
 
-    private static final String DEFAULT_PATH = "./bin/download";
-    private static final String DEFAUL_FILE_NAME = "test57621.txt";
-    private static final String ENCODING = "UTF-8";     // THINK:   is it right encoding for iBank2 ?
+    private static final String DEFAULT_FILE_PATH = "./bin/download";
+    private static final String DEFAULT_FILE_NAME = "test57621.mp4";
 
-    private File dir = new File(DEFAULT_PATH);
+    // THINK:   is it right encoding for iBank2 ?
+    private static final String ENCODING = "UTF-8";
 
-    // Write and save an information into file
-    // FIXME:   make this method smaller
-    public String write(UploadFormData uploadFormDataQ, List<CardHolder> listQ)  throws IOException {
-
+    private void createDirIfNotExist(File dir) {
         if (!dir.exists()) {
             dir.mkdirs();
         }
+    }
 
-        List<CardHolder> list = new ArrayList<CardHolder>(listQ);
-        UploadFormData uploadFormData = uploadFormDataQ;
-        PrintWriter writer = new PrintWriter(dir.getAbsolutePath() + File.separator + DEFAUL_FILE_NAME, ENCODING);
-
+    private void writeDataFromUploadForm(PrintWriter writer, UploadFormData uploadFormData) {
         writer.println("DATE_DOC="          + uploadFormData.getDocDate());
         writer.println("NUM_DOC="           + uploadFormData.getDocNumber());
         writer.println("CLN_NAME="          + uploadFormData.getClientName());
         writer.println("PAYER_BANK_MFO="    + uploadFormData.getBankNumber());
         writer.println("PAYER_BANK_NAME="   + uploadFormData.getBankName());
+    }
 
-        //Think about using forEach
-        for (int cardHolderIndex = 0; cardHolderIndex < list.size(); cardHolderIndex++) {
-            String s = "CARD_HOLDERS." + cardHolderIndex;
+    private void writeDataFromExcel(PrintWriter writer, List<CardHolder> list) {
+        for (CardHolder currentCardHolder : list) {
+
+            // THINK:    0 or 1 is the first index?
+            String prefix = "CARD_HOLDERS." + list.indexOf(currentCardHolder);
             writer.println();
-            writer.println(s + ".CARD_NUM="         + list.get(cardHolderIndex).getSKR());
-            writer.println(s + ".CARD_HOLDER="      + list.get(cardHolderIndex).getName());
-            writer.println(s + ".CARD_HOLDER_INN="  + list.get(cardHolderIndex).getDRFO());
-            writer.println(s + ".SKS_NUMBER="       + list.get(cardHolderIndex).getSKR());
+            writer.println(prefix + ".CARD_NUM="         + currentCardHolder.getSKR());
+            writer.println(prefix + ".CARD_HOLDER="      + currentCardHolder.getName());
+            writer.println(prefix + ".CARD_HOLDER_INN="  + currentCardHolder.getDRFO());
+            writer.println(prefix + ".SKS_NUMBER="       + currentCardHolder.getSKR());
         }
+    }
 
+    public String write(UploadFormData uploadFormData, List<CardHolder> list)  throws IOException {
+
+        File dir = new File(DEFAULT_FILE_PATH);
+        createDirIfNotExist(dir);
+        String currentFileLocation = dir.getAbsolutePath() + File.separator + DEFAULT_FILE_NAME;
+
+        PrintWriter writer = new PrintWriter(currentFileLocation, ENCODING);
+        writeDataFromUploadForm(writer, uploadFormData);
+        writeDataFromExcel(writer, list);
         writer.close();
 
-        return dir.getAbsolutePath() + File.separator + DEFAUL_FILE_NAME;
+        return currentFileLocation;
     }
 
 }
