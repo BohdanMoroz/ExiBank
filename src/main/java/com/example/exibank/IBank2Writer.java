@@ -3,43 +3,34 @@
 
 package com.example.exibank;
 
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class IBank2Writer {
-    private List<CardHolder> list;
-    private PrintWriter writer;
 
-    // THINK:   try to separate file name and file path
-    // FIXME:   change file type from .txt to .iBank2
-    private String path = "./bin/download";
-    private File dir = new File(path);
-    private String fileName = "test57621.txt";
+    private static final String DEFAULT_PATH = "./bin/download";
+    private static final String DEFAUL_FILE_NAME = "test57621.txt";
+    private static final String ENCODING = "UTF-8";     // THINK:   is it right encoding for iBank2 ?
 
+    private File dir = new File(DEFAULT_PATH);
 
-
-    // THINK:   is it right encoding for iBank2 ?
-    private String encoding = "UTF-8";
-
-    private UploadFormData uploadFormData;
-
-    public IBank2Writer(UploadFormData uploadFormData, List<CardHolder> list) throws IOException{
+    // Write and save an information into file
+    // FIXME:   make this method smaller
+    public String write(UploadFormData uploadFormDataQ, List<CardHolder> listQ)  throws IOException {
 
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
-        this.list = new ArrayList<CardHolder>(list);
-        this.uploadFormData = uploadFormData;
-        writer = new PrintWriter(dir.getAbsolutePath() + File.separator + fileName, encoding);
-    }
-
-    // Write and save an information into file
-    // FIXME:   make this method smaller
-    public void saveDoc() {
+        List<CardHolder> list = new ArrayList<CardHolder>(listQ);
+        UploadFormData uploadFormData = uploadFormDataQ;
+        PrintWriter writer = new PrintWriter(dir.getAbsolutePath() + File.separator + DEFAUL_FILE_NAME, ENCODING);
 
         writer.println("DATE_DOC="          + uploadFormData.getDocDate());
         writer.println("NUM_DOC="           + uploadFormData.getDocNumber());
@@ -58,9 +49,8 @@ public class IBank2Writer {
         }
 
         writer.close();
+
+        return dir.getAbsolutePath() + File.separator + DEFAUL_FILE_NAME;
     }
 
-    public String getFileName() {
-        return dir.getAbsolutePath() + File.separator + fileName;
-    }
 }

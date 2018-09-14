@@ -94,15 +94,20 @@ public class MyFileUploadController {
         return this.doSmth(uploadFormData, serverFilePath);
     }
 
+    @Autowired
+    private ExcelReader excelReader;
+
+    @Autowired
+    private IBank2Writer iBank2Writer;
+
     public String doSmth(UploadFormData uploadFormData, String serverFilePath) {
         FileFactory fileFactory = new FileFactory();
         ExcelFile excelFile = fileFactory.getExcelFile(serverFilePath);
         try {
-            ExcelReader excelReader = new ExcelReader(excelFile);
-            excelReader.readDoc();
-            IBank2Writer iBank2Writer = new IBank2Writer(uploadFormData, excelReader.getList());
-            iBank2Writer.saveDoc();
-            resultFile = new File(iBank2Writer.getFileName());
+//            ExcelReader excelReader = new ExcelReader();
+//            IBank2Writer iBank2Writer = new IBank2Writer();
+            String path = iBank2Writer.write(uploadFormData, excelReader.readDoc(excelFile));
+            resultFile = new File(path);
         } catch (IOException e) {
             return "error_result";
         }

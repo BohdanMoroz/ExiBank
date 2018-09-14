@@ -5,61 +5,58 @@ package com.example.exibank;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class ExcelReader {
 
-    private Workbook currentWorkbook;
-    private Sheet currentSheet;
-    private Row currentRow;
+    public List<CardHolder> readDoc(ExcelFile file) throws IOException {
 
-    private int firstRowNumber;
-    private int lastRowNumber;
+        Workbook currentWorkbook = file.getCurrentWorkbook();
+        Sheet currentSheet = file.getCurrentSheet();
 
-//    private CardHolder cardHolder;
+        List<CardHolder> list = readSheet(currentSheet);
+        currentWorkbook.close();
 
-    private List<CardHolder> list = new ArrayList<CardHolder>();
-
-    public ExcelReader(ExcelFile file) {
-        currentWorkbook = file.getCurrentWorkbook();
-        currentSheet = file.getCurrentSheet();
-        currentRow = file.getCurrentRow();
-        initFirstRowNumber();
-        initLastRowNumber();
+        return list;
     }
 
-    // Initialize the first row number to start for
-    // THINK:   most of time the first row number is equal to 0
-    private void initFirstRowNumber() {
-        firstRowNumber = currentSheet.getFirstRowNum();
-    }
+    private List<CardHolder> readSheet(Sheet currentSheet) {
+        List<CardHolder> list = new ArrayList<CardHolder>();
 
-    // Initialize the last row number to end by
-    private void initLastRowNumber() {
-        lastRowNumber = currentSheet.getLastRowNum();
-    }
+        int firstRowNumber = getFirstRowNumber(currentSheet);
+        int lastRowNumber = getLastRowNumber(currentSheet);
 
-    // Fetch all information from every cell of Excel file, and put it into CardHolder
-    public void readDoc() throws IOException {
-        for (int i = firstRowNumber; i <= lastRowNumber; i++) {
-            currentRow = currentSheet.getRow(i);
-
-            CardHolder cardHolder = new CardHolder();
-
-            cardHolder.setSKR( (int) currentRow.getCell(0).getNumericCellValue() );
-            cardHolder.setName( currentRow.getCell(1).getStringCellValue() );
-            cardHolder.setDRFO( (int) currentRow.getCell(2).getNumericCellValue() );
-
+        for (int currentRowNumber = firstRowNumber; currentRowNumber <= lastRowNumber; currentRowNumber++) {
+            Row currentRow = currentSheet.getRow(currentRowNumber);
+            CardHolder cardHolder = readRow(currentRow);
             list.add(cardHolder);
         }
-        currentWorkbook.close();
+
+        return list;
     }
 
-    public List<CardHolder> getList() {
-        return list;
+    private CardHolder readRow(Row currentRow) {
+        CardHolder cardHolder = new CardHolder();
+
+        cardHolder.setSKR   ( (int) currentRow.getCell(0).getNumericCellValue() );
+        cardHolder.setName  (       currentRow.getCell(1).getStringCellValue() );
+        cardHolder.setDRFO  ( (int) currentRow.getCell(2).getNumericCellValue() );
+
+        return cardHolder;
+    }
+
+    // THINK:   most of time the first row number is equal to 0
+    private int getFirstRowNumber(Sheet currentSheet) {
+        return currentSheet.getFirstRowNum();
+    }
+
+    private int getLastRowNumber(Sheet currentSheet) {
+        return currentSheet.getLastRowNum();
     }
 
 }
