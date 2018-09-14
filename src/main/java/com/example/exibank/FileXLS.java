@@ -30,7 +30,8 @@ public class FileXLS implements ExcelFile{
         try {
             currentWorkbook = new HSSFWorkbook(new FileInputStream(filePath));
         } catch (IOException e) {
-
+            // Some logic should be added. (logs, another exception, etc.)
+            // + initSheet will return NPE
         }
     }
 
