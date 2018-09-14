@@ -37,6 +37,7 @@ public class IBank2Writer {
         for (CardHolder currentCardHolder : list) {
 
             // THINK:    0 or 1 is the first index?
+            // Better to use for i=0; .......  list.indexOf will iterate elements each time
             String prefix = "CARD_HOLDERS." + list.indexOf(currentCardHolder);
             writer.println();
             writer.println(prefix + ".CARD_NUM="         + currentCardHolder.getSKR());
