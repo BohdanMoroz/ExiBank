@@ -65,6 +65,7 @@ public class MyFileUploadController {
 
         File uploadRootDir = new File(uploadRootPath);
 
+        // Dublication. Might be moved to separate util class
         if (!uploadRootDir.exists()) {
             uploadRootDir.mkdirs();
         }
